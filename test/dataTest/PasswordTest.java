@@ -12,8 +12,8 @@ public class PasswordTest {
 
     @Test
     public void testPasswordValid() throws InvalidFormatException, NullPasswordException {
-        new Password("My_Password");
-        assertEquals("My_Password", Password.getPassword());
+        Password password = new Password("My_Password");
+        assertEquals("My_Password", password.getPassword());
     }
 
     @Test

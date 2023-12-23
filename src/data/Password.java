@@ -5,8 +5,8 @@ import exceptions.NullPasswordException;
 
 import java.util.regex.Pattern;
 
-public class Password {
-    private static String password;
+final public class Password {
+    private final String password;
 
     public Password(String password) throws InvalidFormatException, NullPasswordException {
         if (password == null) {
@@ -15,11 +15,11 @@ public class Password {
         if (!isValidPassword(password)) {
             throw new InvalidFormatException("The password must contain at least 8 characters, 1 upper case and 1 special character");
         }
-        Password.password = password;
+        this.password = password;
     }
 
-    public static String getPassword() {
-        return password;
+    public String getPassword() {
+        return this.password;
     }
 
     public boolean isValidPassword(String password) {

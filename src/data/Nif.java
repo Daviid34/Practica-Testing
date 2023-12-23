@@ -5,8 +5,8 @@ import exceptions.NullNifException;
 
 import java.util.regex.Pattern;
 
-public class Nif {
-    private static String nif = "";
+final public class Nif {
+    private final String nif;
 
     public Nif(String nif) throws InvalidFormatException, NullNifException {
         if (nif == null) {
@@ -15,11 +15,11 @@ public class Nif {
         if (!isValidNifFormat(nif)) {
             throw new InvalidFormatException("The NIF format is incorrect");
         }
-        Nif.nif = nif;
+        this.nif = nif;
     }
 
-    public static String getNif() {
-        return nif;
+    public String getNif() {
+        return this.nif;
     }
 
     public boolean isValidNifFormat(String nif) {
