@@ -12,7 +12,7 @@ public class NifTest {
 
     @Test
     public void testNifValid() throws NullNifException, InvalidFormatException {
-        Nif nif = new Nif("12345678A");
+        new Nif("12345678A");
         assertEquals("12345678A", Nif.getNif());
     }
 
