@@ -26,4 +26,11 @@ final public class Password {
         String passwordPattern = "^(?=.*[A-Z])(?=.*[!@#$%^&*()-+_={}\\[\\]:;<>,.?/~]).{8,}$";
         return Pattern.matches(passwordPattern, password);
     }
+
+    public boolean equalPassword (Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Password pwd = (Password) o;
+        return password.equals(pwd.password);
+    }
 }

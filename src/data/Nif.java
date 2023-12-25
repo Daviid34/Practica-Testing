@@ -26,4 +26,11 @@ final public class Nif {
         String nifPattern = "^[0-9]{8}[A-Za-z]$";
         return Pattern.matches(nifPattern, nif);
     }
+
+    public boolean equalNif (Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Nif n = (Nif) o;
+        return nif.equals(n.nif);
+    }
 }
