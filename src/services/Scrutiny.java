@@ -1,5 +1,9 @@
 package services;
 
+import data.VotingOption;
+
+import java.util.List;
+
 public interface Scrutiny {
     void initVoteCount (List<VotingOption> validParties);
     void scrutinize (VotingOption vopt);

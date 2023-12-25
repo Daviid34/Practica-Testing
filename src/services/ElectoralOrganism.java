@@ -1,5 +1,6 @@
 package services;
 
+import data.Nif;
 import exceptions.ConnectException;
 import exceptions.NotEnabledException;
 
