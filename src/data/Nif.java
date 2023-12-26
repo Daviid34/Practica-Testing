@@ -2,6 +2,7 @@ package data;
 
 import exceptions.InvalidFormatException;
 import exceptions.NullNifException;
+import java.util.Objects;
 
 import java.util.regex.Pattern;
 
@@ -27,10 +28,16 @@ final public class Nif {
         return Pattern.matches(nifPattern, nif);
     }
 
-    public boolean equalNif (Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Nif n = (Nif) o;
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        Nif n = (Nif)other;
         return nif.equals(n.nif);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nif);
     }
 }
