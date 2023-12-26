@@ -28,33 +28,33 @@ public class PasswordTest {
     @Test
     public void testEqualPasswordWithSameInstance() throws InvalidFormatException, NullPasswordException {
         Password password = new Password("My_password");
-        assertTrue(password.equalPassword(password));
+        assertTrue(password.equals(password));
     }
 
     @Test
     public void testEqualPasswordWithSamePasswords() throws InvalidFormatException, NullPasswordException {
         Password pwd1 = new Password("My_password");
         Password pwd2 = new Password("My_password");
-        assertTrue(pwd1.equalPassword(pwd2));
+        assertTrue(pwd1.equals(pwd2));
     }
 
     @Test
     public void testEqualPasswordWithDifferentPasswords() throws InvalidFormatException, NullPasswordException {
         Password pwd1 = new Password("My_password");
         Password pwd2 = new Password("Your_password");
-        assertFalse(pwd1.equalPassword(pwd2));
+        assertFalse(pwd1.equals(pwd2));
     }
 
     @Test
     public void testEqualPasswordWithNull() throws InvalidFormatException, NullPasswordException {
         Password password = new Password("My_password");
-        assertFalse(password.equalPassword(null));
+        assertFalse(password.equals(null));
     }
 
     @Test
     public void testEqualPasswordWithDifferentClass() throws InvalidFormatException, NullPasswordException {
         Password password = new Password("My_password");
-        assertFalse(password.equalPassword("My_password"));
+        assertFalse(password.equals("My_password"));
     }
 
 }

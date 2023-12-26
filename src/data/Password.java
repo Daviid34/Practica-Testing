@@ -36,7 +36,8 @@ final public class Password {
         return totalCh > 7 && upperCh > 0 && specialCh > 0;
     }
 
-    public boolean equalPassword (Object o) {
+    @Override
+    public boolean equals (Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Password pwd = (Password) o;
