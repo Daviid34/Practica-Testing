@@ -5,8 +5,6 @@ import evoting.VotingKiosk;
 import exceptions.InvalidAccountException;
 import exceptions.InvalidFormatException;
 import exceptions.NullPasswordException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
