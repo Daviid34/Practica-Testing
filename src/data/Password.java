@@ -23,8 +23,17 @@ final public class Password {
     }
 
     public boolean isValidPassword(String password) {
-        String passwordPattern = "^(?=.*[A-Z])(?=.*[!@#$%^&*()-+_={}\\[\\]:;<>,.?/~]).{8,}$";
-        return Pattern.matches(passwordPattern, password);
+        int specialCh = 0;
+        int upperCh = 0;
+        int other = 0;
+        for (int i = 0; i < password.length(); i++) {
+            char c = password.charAt(i);
+            if (Character.isUpperCase(c)) upperCh++;
+            else if (!Character.isLetterOrDigit(c) && !Character.isWhitespace(c)) specialCh++;
+            else other++;
+        }
+        int totalCh = specialCh + upperCh + other;
+        return totalCh > 7 && upperCh > 0 && specialCh > 0;
     }
 
     public boolean equalPassword (Object o) {
