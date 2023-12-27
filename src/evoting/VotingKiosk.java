@@ -28,7 +28,7 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
     }
 
     public void verifyAccount(String login, Password pssw) throws InvalidAccountException {
-        if (!loginHashMap.get(login).equalPassword(pssw)) throw new InvalidAccountException("ERROR: The account provided by the support staff is invalid");
+        if (!loginHashMap.get(login).equals(pssw)) throw new InvalidAccountException("ERROR: The account provided by the support staff is invalid");
     }
 
     public void setLoginHashMap(HashMap<String, Password> loginHashMap) {

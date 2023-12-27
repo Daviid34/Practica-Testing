@@ -3,8 +3,6 @@ package data;
 import exceptions.InvalidFormatException;
 import exceptions.NullPasswordException;
 
-import java.util.regex.Pattern;
-
 final public class Password {
     private final String password;
 

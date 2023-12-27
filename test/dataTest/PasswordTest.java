@@ -3,15 +3,21 @@ package dataTest;
 import data.Password;
 import exceptions.InvalidFormatException;
 import exceptions.NullPasswordException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PasswordTest {
+    Password password;
+
+    @BeforeEach
+    void init() throws InvalidFormatException, NullPasswordException {
+        password = new Password("My_password");
+    }
 
     @Test
-    public void testPasswordValid() throws InvalidFormatException, NullPasswordException {
-        Password password = new Password("My_Password");
+    public void testPasswordValid() {
         assertEquals("My_Password", password.getPassword());
     }
 
@@ -26,34 +32,29 @@ public class PasswordTest {
     }
 
     @Test
-    public void testEqualPasswordWithSameInstance() throws InvalidFormatException, NullPasswordException {
-        Password password = new Password("My_password");
+    public void testEqualPasswordWithSameInstance() {
         assertTrue(password.equals(password));
     }
 
     @Test
     public void testEqualPasswordWithSamePasswords() throws InvalidFormatException, NullPasswordException {
-        Password pwd1 = new Password("My_password");
         Password pwd2 = new Password("My_password");
-        assertTrue(pwd1.equals(pwd2));
+        assertTrue(password.equals(pwd2));
     }
 
     @Test
     public void testEqualPasswordWithDifferentPasswords() throws InvalidFormatException, NullPasswordException {
-        Password pwd1 = new Password("My_password");
         Password pwd2 = new Password("Your_password");
-        assertFalse(pwd1.equals(pwd2));
+        assertFalse(password.equals(pwd2));
     }
 
     @Test
-    public void testEqualPasswordWithNull() throws InvalidFormatException, NullPasswordException {
-        Password password = new Password("My_password");
+    public void testEqualPasswordWithNull() {
         assertFalse(password.equals(null));
     }
 
     @Test
-    public void testEqualPasswordWithDifferentClass() throws InvalidFormatException, NullPasswordException {
-        Password password = new Password("My_password");
+    public void testEqualPasswordWithDifferentClass() {
         assertFalse(password.equals("My_password"));
     }
 
