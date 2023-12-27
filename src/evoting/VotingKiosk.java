@@ -18,7 +18,7 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
     HashMap<Nif, Boolean> canVoteHashMap;
 
     public void canVote(Nif nif) throws NotEnabledException, ConnectException {
-        boolean hola= canVoteHashMap.containsKey(nif);
+        boolean hola = canVoteHashMap.containsKey(nif);
         if (!hola) throw new NotEnabledException("ERROR: It does not exist in this electoral College");
         if (!canVoteHashMap.get(nif)) throw new NotEnabledException("ERROR: User already voted");
     }
@@ -73,4 +73,4 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
     public void getScrutinyResults() {
 
     }
-}
+    }
