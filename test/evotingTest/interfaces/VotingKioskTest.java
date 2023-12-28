@@ -4,10 +4,7 @@ import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
-import exceptions.InvalidAccountException;
-import exceptions.InvalidFormatException;
-import exceptions.NullPasswordException;
-import exceptions.ProceduralException;
+import exceptions.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -28,14 +25,14 @@ public interface VotingKioskTest {
     void enterNifTest() throws ProceduralException, InvalidFormatException, NullPasswordException, InvalidAccountException;
 
     @Test
-    void initOptionsNavigationTest() throws ProceduralException;
+    void initOptionsNavigationTest() throws ProceduralException, InvalidFormatException, NullPasswordException, InvalidAccountException, InvalidDNIDocumException;
 
     @Test
-    void consultVotingOptionTest();
+    void consultVotingOptionTest() throws ProceduralException, InvalidFormatException, NullPasswordException, InvalidAccountException, InvalidDNIDocumException, NullNifException, NotEnabledException, ConnectException;
 
     @Test
-    void voteTest();
+    void voteTest() throws ProceduralException, InvalidFormatException, InvalidDNIDocumException, NullPasswordException, InvalidAccountException, NullNifException, NotEnabledException, ConnectException;
 
     @Test
-    void confirmVotingOptionTest();
+    void confirmVotingOptionTest() throws NullNifException, ProceduralException, InvalidFormatException, InvalidDNIDocumException, NotEnabledException, NullPasswordException, InvalidAccountException, ConnectException;
 }
