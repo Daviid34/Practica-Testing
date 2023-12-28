@@ -8,6 +8,7 @@ import evotingTest.interfaces.VotingKioskTest;
 import exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import services.*;
 
 import java.util.HashMap;
 
@@ -18,15 +19,16 @@ public class IncorrectOrderTest implements VotingKioskTest {
 
     @BeforeEach
     void init() throws NullNifException, InvalidFormatException, NullPasswordException {
-        server = new VotingKiosk();
+        HashMap<Nif, Boolean> canVoteHashMap = new HashMap<>();
+        canVoteHashMap.put(new Nif("12345678K"), true);
+        HashMap<String, Password> loginHashMap = new HashMap<>();
+        loginHashMap.put("David", new Password("Password123-"));
 
-        HashMap<Nif, Boolean> HM1 = new HashMap<>();
-        HM1.put(new Nif("12345678K"), true);
-        HashMap<String, Password> HM2 = new HashMap<>();
-        HM2.put("David", new Password("Password123-"));
+        Scrutiny scrutiny = new ScrutinyImpl();
+        LocalService localService = new LocalServiceImpl(loginHashMap);
+        ElectoralOrganism electoralOrganism = new ElectoralOrganismImpl(canVoteHashMap);
 
-        //server.setCanVoteHashMap(HM1);
-        //server.setLoginHashMap(HM2);
+        server = new VotingKiosk(scrutiny, localService, electoralOrganism);
     }
 
     @Override

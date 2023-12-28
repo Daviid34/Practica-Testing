@@ -10,8 +10,6 @@ import java.util.List;
 public class ScrutinyImpl implements Scrutiny{
     HashMap<VotingOption, Integer> partyVotesHashmap;
 
-    public ScrutinyImpl(){};
-
     @Override
     public void initVoteCount(List<VotingOption> validParties) {
         partyVotesHashmap = new HashMap<>();
