@@ -1,22 +1,20 @@
-package evotingTest.scrutinyTest;
+package servicesTest.scrutinyTest;
 
 import data.VotingOption;
-import evoting.VotingKiosk;
-import evotingTest.interfaces.ScrutinyTest;
+import servicesTest.interfaces.ScrutinyTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
+import services.Scrutiny;
+import services.ScrutinyImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ScrutinyNullTest implements ScrutinyTest {
-    private VotingKiosk server;
+    private Scrutiny server;
 
     @BeforeEach
     void init() {
-        server = new VotingKiosk();
+        server = new ScrutinyImpl();
         server.initVoteCount(null);
     }
 

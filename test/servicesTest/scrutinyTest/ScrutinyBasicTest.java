@@ -1,18 +1,21 @@
-package evotingTest.scrutinyTest;
+package servicesTest.scrutinyTest;
 
 import data.VotingOption;
-import evoting.VotingKiosk;
-import evotingTest.interfaces.ScrutinyTest;
+import servicesTest.interfaces.ScrutinyTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import services.Scrutiny;
+import services.ScrutinyImpl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ScrutinyBasicTest implements ScrutinyTest {
-    private VotingKiosk server;
+    private Scrutiny server;
     private VotingOption joker;
 
     @BeforeEach
@@ -24,7 +27,7 @@ public class ScrutinyBasicTest implements ScrutinyTest {
         parties.add(new VotingOption("PartyC"));
         parties.add(new VotingOption("PartyD"));
 
-        server = new VotingKiosk();
+        server = new ScrutinyImpl();
         server.initVoteCount(parties);
     }
 
@@ -67,7 +70,14 @@ public class ScrutinyBasicTest implements ScrutinyTest {
         server.scrutinize(new VotingOption("PartyC"));
         server.scrutinize(null);
 
-        String printedContent = server.ScrutinyResultsToString();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+
+        server.getScrutinyResults();
+
+        System.setOut(originalOut);
+        String printedContent = outputStream.toString();
         String expectedOutput = """
                 Vote option {party='PartyA'}: 2
                 Vote option {party='PartyB'}: 0

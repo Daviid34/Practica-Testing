@@ -1,4 +1,4 @@
-package evotingTest.interfaces;
+package servicesTest.interfaces;
 
 import data.VotingOption;
 import org.junit.jupiter.api.Test;
