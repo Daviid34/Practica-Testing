@@ -28,10 +28,14 @@ final public class Nif {
         return Pattern.matches(nifPattern, nif);
     }
 
-    public boolean equalNif (Object o) {
+    @Override
+    public boolean equals (Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Nif n = (Nif) o;
         return nif.equals(n.nif);
     }
+
+    @Override
+    public int hashCode () { return nif.hashCode(); }
 }

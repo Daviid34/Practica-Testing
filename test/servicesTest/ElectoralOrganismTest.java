@@ -1,4 +1,4 @@
-package evotingTest;
+package servicesTest;
 
 import data.Nif;
 import evoting.VotingKiosk;
