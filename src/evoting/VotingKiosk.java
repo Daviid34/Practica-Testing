@@ -19,6 +19,7 @@ import java.util.Map;
 public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
     HashMap<String, Password> loginHashMap;
     HashMap<Nif, Boolean> canVoteHashMap;
+    ArrayList<VotingOption> validOptions = new ArrayList<>();
 
     public void canVote(Nif nif) throws NotEnabledException, ConnectException {
         boolean hola= canVoteHashMap.containsKey(nif);
@@ -43,14 +44,13 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
     }
 
     //Scrutiny methods
-    private Map<VotingOption, Integer> voteCounts;
+    private Map<VotingOption, Integer> voteCounts = new HashMap<>();
     private int nullVotes;
     private int blankVotes;
     private int totalVotes;
 
     @Override
     public void initVoteCount(List<VotingOption> validParties) {
-        voteCounts = new HashMap<>();
         for (VotingOption party : validParties) {
             voteCounts.put(party, 0);
         }
@@ -66,7 +66,9 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
         } else if (isBlank(vopt)) {
             blankVotes++;
         } else {
-            voteCounts.put(vopt, voteCounts.get(vopt) + 1);
+            Integer currentCount = voteCounts.get(vopt);
+            int updatedCount = (currentCount != null) ? currentCount + 1 : 1;
+            voteCounts.put(vopt, updatedCount);
         }
         totalVotes++;
     }
@@ -106,13 +108,15 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
         System.out.println("Null Votes: " + nullVotes);
     }
 
-
+    public ArrayList<VotingOption> getValidOptions() {
+        return this.validOptions;
+    }
 
 
     // VotingKiosk Methods
     public void initVoting() {
         List<VotingOption> validParties = new ArrayList<>();
-        validParties = retrieveVotingOptions();
+        validParties = retrieveVotingOptions(validOptions);
         initVoteCount(validParties);
     }
 
@@ -137,7 +141,7 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
     }
 
     public void initOptionsNavigation() {
-        List<VotingOption> votingOptions = retrieveVotingOptions();
+        List<VotingOption> votingOptions = retrieveVotingOptions(validOptions);
         displayVotingOptions(votingOptions);
     }
 
@@ -159,7 +163,7 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
         }
     }
 
-    private void finalizeSession() {
+    public void finalizeSession() {
         System.out.println("Voting session finalized. Returning to the initial screen.");
     }
 
@@ -188,8 +192,8 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
 
 
     //Additional Methods
-    private List<VotingOption> retrieveVotingOptions() {
-        List<VotingOption> votingOptions = new ArrayList<>();
+    private List<VotingOption> retrieveVotingOptions(ArrayList<VotingOption> vOs) {
+        List<VotingOption> votingOptions = vOs;
         return votingOptions;
     }
 
@@ -209,7 +213,7 @@ public class VotingKiosk implements ElectoralOrganism, LocalService, Scrutiny {
     }
 
     private VotingOption getSelectedOption() {
-        List<VotingOption> votingOptions = retrieveVotingOptions();
+        List<VotingOption> votingOptions = retrieveVotingOptions(validOptions);
         return votingOptions.isEmpty() ? null : votingOptions.get(0);
     }
 }
