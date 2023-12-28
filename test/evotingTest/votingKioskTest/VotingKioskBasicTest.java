@@ -28,7 +28,7 @@ public class VotingKioskBasicTest implements VotingKioskTest {
         HashMap<String, Password> HM2 = new HashMap<>();
         HM2.put("David", new Password("Password123-"));
 
-        server.setCanVoteHashMap(HM1);
+        //server.setCanVoteHashMap(HM1);
         //server.setLoginHashMap(HM2);
     }
 

@@ -5,8 +5,6 @@ import data.Password;
 import data.VotingOption;
 import exceptions.*;
 import mocks.PartyListServer;
-import services.ElectoralOrganism;
-import services.LocalService;
 import services.Scrutiny;
 
 import java.io.ByteArrayOutputStream;
@@ -14,60 +12,47 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 
-public class VotingKiosk implements ElectoralOrganism, Scrutiny {
-    HashMap<Nif, Boolean> canVoteHashMap;
-    HashMap<VotingOption, Integer> partyVotesHashmap;
+public class VotingKiosk implements Scrutiny {
 
     public VotingKiosk() {
     }
-
-    public void canVote(Nif nif) throws NotEnabledException, ConnectException {
-        if (!canVoteHashMap.containsKey(nif)) throw new NotEnabledException("ERROR: It does not exist in this electoral College");
-        if (!canVoteHashMap.get(nif)) throw new NotEnabledException("ERROR: User already voted");
-    }
-
-    public void disableVoter(Nif nif) throws ConnectException {
-        canVoteHashMap.replace(nif, false);
-    }
-
-    public void setCanVoteHashMap(HashMap<Nif, Boolean> canVoteHashMap) {
-        this.canVoteHashMap = canVoteHashMap;
-    }
-/*
+    /*
 ------------------------------------------SCRUTINITY--------------------------------------------------------------
  */
 
 
     public void initVoteCount(List<VotingOption> validParties) {
-        partyVotesHashmap = new HashMap<>();
+        //partyVotesHashmap = new HashMap<>();
         if (validParties != null) {
             for (VotingOption party : validParties) {
-                partyVotesHashmap.put(party, 0);
+                //partyVotesHashmap.put(party, 0);
             }
         }
     }
     int nulls = 0;
     int blanks = 0;
+
     public void scrutinize(VotingOption vopt) {
         if (vopt == null) {
             blanks++;
-        } else if (vopt.getParty() == null || !partyVotesHashmap.containsKey(vopt)) {
+        } //else if (vopt.getParty() == null || !partyVotesHashmap.containsKey(vopt)) {
             nulls++;
-        } else {
-            int votes = partyVotesHashmap.get(vopt);
-            partyVotesHashmap.put(vopt, votes + 1);
-        }
+        //} else {
+            //int votes = partyVotesHashmap.get(vopt);
+            //partyVotesHashmap.put(vopt, votes + 1);
+        //}
     }
 
     public int getVotesFor(VotingOption vopt) {
-        return partyVotesHashmap.get(vopt);
+        //return partyVotesHashmap.get(vopt);
+        return 1;
     }
 
     public int getTotal() {
         int count = 0;
-        for (VotingOption party : partyVotesHashmap.keySet()) {
-            count += partyVotesHashmap.get(party);
-        }
+        //for (VotingOption party : partyVotesHashmap.keySet()) {
+            //count += partyVotesHashmap.get(party);
+       // }
         return count + blanks;
     }
 
@@ -80,9 +65,9 @@ public class VotingKiosk implements ElectoralOrganism, Scrutiny {
     }
 
     public void getScrutinyResults() {
-        for (VotingOption party : partyVotesHashmap.keySet()) {
-            System.out.print(party.toString() + ": " + partyVotesHashmap.get(party) + "\n");
-        }
+        //for (VotingOption party : partyVotesHashmap.keySet()) {
+            //System.out.print(party.toString() + ": " + partyVotesHashmap.get(party) + "\n");
+        //}
         System.out.print("Blank votes: " + blanks + "\n");
         System.out.print("Null votes: " + nulls + "\n");
     }
@@ -140,7 +125,7 @@ public class VotingKiosk implements ElectoralOrganism, Scrutiny {
     public void enterNif(Nif nif) throws NotEnabledException, ConnectException, ProceduralException {
         if (conf != 'v') throw new ProceduralException("ERROR: confirmIdentif wasn't called earlier");
         nif.isValidNifFormat();
-        canVote(nif);
+        //canVote(nif);
         voter = nif;
         System.out.println("Verification of vote OK, you may now initialize the option navigation");
     }
@@ -177,7 +162,7 @@ public class VotingKiosk implements ElectoralOrganism, Scrutiny {
         if (conf == 'v') {
             System.out.println("\nVote confirmed!");
             scrutinize(party);
-            disableVoter(voter);
+            //disableVoter(voter);
         }
     }
 /*
