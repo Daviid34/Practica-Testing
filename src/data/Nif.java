@@ -12,25 +12,30 @@ final public class Nif {
         if (nif == null) {
             throw new NullNifException("The introduced NIF is NULL");
         }
-        if (!isValidNifFormat(nif)) {
+        this.nif = nif;
+        if (!isValidNifFormat()) {
             throw new InvalidFormatException("The NIF format is incorrect");
         }
-        this.nif = nif;
+
     }
 
     public String getNif() {
         return this.nif;
     }
 
-    public boolean isValidNifFormat(String nif) {
+    public boolean isValidNifFormat() {
         String nifPattern = "^[0-9]{8}[A-Za-z]$";
         return Pattern.matches(nifPattern, nif);
     }
 
-    public boolean equalNif (Object o) {
+    @Override
+    public boolean equals (Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Nif n = (Nif) o;
         return nif.equals(n.nif);
     }
+
+    @Override
+    public int hashCode () { return nif.hashCode(); }
 }

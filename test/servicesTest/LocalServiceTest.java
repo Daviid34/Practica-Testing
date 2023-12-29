@@ -1,4 +1,4 @@
-package evotingTest;
+package servicesTest;
 
 import data.Password;
 import evoting.VotingKiosk;
@@ -7,6 +7,8 @@ import exceptions.InvalidFormatException;
 import exceptions.NullPasswordException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import services.LocalService;
+import services.LocalServiceImpl;
 
 import java.util.HashMap;
 
@@ -14,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LocalServiceTest {
-    VotingKiosk server = new VotingKiosk();
+    LocalService server;
 
     @BeforeEach
     void init() throws InvalidFormatException, NullPasswordException {
         HashMap<String, Password> loginHashMap = new HashMap<>();
         loginHashMap.put("David", new Password("FakeP1-2"));
-        server.setLoginHashMap(loginHashMap);
+        server = new LocalServiceImpl(loginHashMap);
     }
 
     @Test
