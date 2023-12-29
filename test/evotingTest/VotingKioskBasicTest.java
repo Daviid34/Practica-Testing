@@ -1,10 +1,9 @@
-package evotingTest.votingKioskTest;
+package evotingTest;
 
 import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
-import evotingTest.interfaces.VotingKioskTest;
 import exceptions.InvalidFormatException;
 import exceptions.NullNifException;
 import exceptions.NullPasswordException;
@@ -17,7 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-public class VotingKioskBasicTest implements VotingKioskTest {
+public class VotingKioskBasicTest {
     private VotingKiosk server;
 
     @BeforeEach
@@ -69,7 +68,6 @@ public class VotingKioskBasicTest implements VotingKioskTest {
         assertDoesNotThrow(()-> {server.initOptionsNavigation();});
     }
 
-    @Override
     @Test
     public void consultVotingOptionTest() {
         initOptionsNavigationTest();
@@ -78,14 +76,12 @@ public class VotingKioskBasicTest implements VotingKioskTest {
         assertDoesNotThrow(() -> {server.consultVotingOption(party);});
     }
 
-    @Override
     @Test
     public void voteTest() {
         consultVotingOptionTest();
         assertDoesNotThrow(() -> {server.vote();});
     }
 
-    @Override
     @Test
     public void confirmVotingOptionTest() {
         voteTest();

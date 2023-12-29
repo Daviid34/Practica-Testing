@@ -4,22 +4,30 @@ import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
-import exceptions.*;
-import org.junit.jupiter.api.Test;
-import java.net.ConnectException;
+import exceptions.InvalidAccountException;
+import exceptions.InvalidDNIDocumException;
+import exceptions.NotEnabledException;
+import exceptions.ProceduralException;
+import mocks.PartyListServer;
 
 import java.net.ConnectException;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public interface VotingKioskTest {
-    @Test
-    void consultVotingOptionTest() throws ProceduralException, InvalidFormatException, NullPasswordException, InvalidAccountException, InvalidDNIDocumException, NullNifException, NotEnabledException, ConnectException;
+    void setDocument(char c) throws ProceduralException;
 
-    @Test
-    void voteTest() throws ProceduralException, InvalidFormatException, InvalidDNIDocumException, NullPasswordException, InvalidAccountException, NullNifException, NotEnabledException, ConnectException;
+    void enterAccount(String login, Password pssw) throws InvalidAccountException, ProceduralException;
 
-    @Test
-    void confirmVotingOptionTest() throws NullNifException, ProceduralException, InvalidFormatException, InvalidDNIDocumException, NotEnabledException, NullPasswordException, InvalidAccountException, ConnectException;
+
+    void confirmIdentif(char conf) throws InvalidDNIDocumException, ProceduralException;
+
+    void enterNif(Nif nif) throws NotEnabledException, ConnectException, ProceduralException;
+
+    void initOptionsNavigation() throws ProceduralException;
+
+
+    void consultVotingOption(VotingOption vopt) throws ProceduralException;
+
+    void vote() throws ProceduralException;
+
+    void confirmVotingOption(char conf) throws ProceduralException, ConnectException;
 }

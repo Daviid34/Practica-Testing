@@ -125,6 +125,8 @@ public class VotingKiosk {
         if (context.entryPoint != EntryPoint.ConfirmVotingOption) throw new ProceduralException("ERROR: vote wasn't called earlier");
         if (conf == 'f'){
             partyChosed = null;
+            //In case it's not confirmed, show again the voting options are anable to go back to ConsultVotingOptions
+            showParties(parties);
             context.entryPoint = EntryPoint.ConsultVotingOptions;
         }
         if (conf == 'v') {
