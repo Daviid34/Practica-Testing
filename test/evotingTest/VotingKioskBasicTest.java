@@ -4,9 +4,7 @@ import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
-import exceptions.InvalidFormatException;
-import exceptions.NullNifException;
-import exceptions.NullPasswordException;
+import exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.*;
@@ -15,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class VotingKioskBasicTest {
     private VotingKiosk server;
@@ -53,6 +52,8 @@ public class VotingKioskBasicTest {
     @Test
     public void confirmIdentifTest() {
         enterAccountTest();
+        assertThrows(InvalidDNIDocumException.class, () -> {server.confirmIdentif('f');});
+        server.entryPointSetter(VotingKiosk.EntryPoint.ConfirmIdentif);
         assertDoesNotThrow(() -> {server.confirmIdentif('v');});
     }
 
