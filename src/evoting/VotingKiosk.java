@@ -43,7 +43,7 @@ public class VotingKiosk {
         }
     }
 
-    private enum EntryPoint {
+    public enum EntryPoint {
         SetDocument, EnterAccount, ConfirmIdentif, EnterNif, InitOptionsNavigation, ConsultVotingOptions, Vote, ConfirmVotingOption
     }
 
@@ -149,5 +149,9 @@ public class VotingKiosk {
 
     public List<VotingOption> getParties() {
         return parties;
+    }
+
+    public void entryPointSetter(EntryPoint entryPoint) {
+        context.entryPoint = entryPoint;
     }
 }
