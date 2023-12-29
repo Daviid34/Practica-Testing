@@ -15,13 +15,11 @@ public interface VotingKioskTest {
 
     void enterAccount() throws InvalidAccountException, ProceduralException;
 
-
     void confirmIdentif() throws InvalidDNIDocumException, ProceduralException;
 
     void enterNif() throws NotEnabledException, ConnectException, ProceduralException;
 
     void initOptionsNavigation() throws ProceduralException;
-
 
     void consultVotingOption() throws ProceduralException;
 
