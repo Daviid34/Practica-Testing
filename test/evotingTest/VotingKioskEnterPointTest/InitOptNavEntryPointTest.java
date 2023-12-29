@@ -1,9 +1,10 @@
-package evotingTest.VotingKioskEnterPointTest.interfaces;
+package evotingTest.VotingKioskEnterPointTest;
 
 import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
+import evotingTest.VotingKioskEnterPointTest.interfaces.VotingKioskTest;
 import exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConfVotOptEntryPointTest implements VotingKioskTest {
+public class InitOptNavEntryPointTest implements VotingKioskTest {
     VotingKiosk server;
     List<VotingOption> parties;
 
@@ -34,7 +35,7 @@ public class ConfVotOptEntryPointTest implements VotingKioskTest {
         server = new VotingKiosk(scrutiny, localService, electoralOrganism);
         server.initVoting(); //To inicializate context so it doesn't throw NullPointerException
         parties = server.getParties();
-        server.entryPointSetter(VotingKiosk.EntryPoint.ConfirmVotingOption);
+        server.entryPointSetter(VotingKiosk.EntryPoint.InitOptionsNavigation);
     }
 
     @Override
@@ -64,13 +65,13 @@ public class ConfVotOptEntryPointTest implements VotingKioskTest {
     @Override
     @Test
     public void initOptionsNavigation() throws ProceduralException {
-        assertThrows(ProceduralException.class, () -> {server.initOptionsNavigation();});
+        assertDoesNotThrow(() -> {server.initOptionsNavigation();});
     }
 
     @Override
     @Test
     public void consultVotingOption() throws ProceduralException {
-        assertDoesNotThrow(() -> {server.consultVotingOption(parties.get(0));});
+        assertThrows(ProceduralException.class, () -> {server.consultVotingOption(parties.get(0));});
     }
 
     @Override
@@ -82,6 +83,6 @@ public class ConfVotOptEntryPointTest implements VotingKioskTest {
     @Override
     @Test
     public void confirmVotingOption() throws ProceduralException, ConnectException {
-        assertDoesNotThrow(() -> {server.confirmVotingOption('v');});
+        assertThrows(ProceduralException.class, () -> {server.confirmVotingOption('v');});
     }
 }

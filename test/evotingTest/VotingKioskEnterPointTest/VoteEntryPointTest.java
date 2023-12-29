@@ -1,9 +1,10 @@
-package evotingTest.VotingKioskEnterPointTest.interfaces;
+package evotingTest.VotingKioskEnterPointTest;
 
 import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
+import evotingTest.VotingKioskEnterPointTest.interfaces.VotingKioskTest;
 import exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class InitOptNavEntryPointTest implements VotingKioskTest {
+public class VoteEntryPointTest implements VotingKioskTest {
     VotingKiosk server;
     List<VotingOption> parties;
 
     @BeforeEach
-    void init() throws InvalidFormatException, NullPasswordException, NullNifException {
+    void init() throws InvalidFormatException, NullPasswordException, NullNifException, ProceduralException {
         HashMap<Nif, Boolean> canVoteHashMap = new HashMap<>();
         canVoteHashMap.put(new Nif("12345678K"), true);
         HashMap<String, Password> loginHashMap = new HashMap<>();
@@ -34,7 +35,9 @@ public class InitOptNavEntryPointTest implements VotingKioskTest {
         server = new VotingKiosk(scrutiny, localService, electoralOrganism);
         server.initVoting(); //To inicializate context so it doesn't throw NullPointerException
         parties = server.getParties();
-        server.entryPointSetter(VotingKiosk.EntryPoint.InitOptionsNavigation);
+        server.entryPointSetter(VotingKiosk.EntryPoint.ConsultVotingOptions); //If not NullPointerException is thrown in vote()
+        server.consultVotingOption(parties.get(0));
+        server.entryPointSetter(VotingKiosk.EntryPoint.Vote);
     }
 
     @Override
@@ -64,7 +67,7 @@ public class InitOptNavEntryPointTest implements VotingKioskTest {
     @Override
     @Test
     public void initOptionsNavigation() throws ProceduralException {
-        assertDoesNotThrow(() -> {server.initOptionsNavigation();});
+        assertThrows(ProceduralException.class, () -> {server.initOptionsNavigation();});
     }
 
     @Override
@@ -76,7 +79,7 @@ public class InitOptNavEntryPointTest implements VotingKioskTest {
     @Override
     @Test
     public void vote() throws ProceduralException {
-        assertThrows(ProceduralException.class, () -> {server.vote();});
+        assertDoesNotThrow(() -> {server.vote();});
     }
 
     @Override

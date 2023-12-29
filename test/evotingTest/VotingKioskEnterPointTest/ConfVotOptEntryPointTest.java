@@ -1,9 +1,10 @@
-package evotingTest.VotingKioskEnterPointTest.interfaces;
+package evotingTest.VotingKioskEnterPointTest;
 
 import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
+import evotingTest.VotingKioskEnterPointTest.interfaces.VotingKioskTest;
 import exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConsultVotOptEntryPointTest implements VotingKioskTest {
+public class ConfVotOptEntryPointTest implements VotingKioskTest {
     VotingKiosk server;
     List<VotingOption> parties;
 
@@ -34,7 +35,7 @@ public class ConsultVotOptEntryPointTest implements VotingKioskTest {
         server = new VotingKiosk(scrutiny, localService, electoralOrganism);
         server.initVoting(); //To inicializate context so it doesn't throw NullPointerException
         parties = server.getParties();
-        server.entryPointSetter(VotingKiosk.EntryPoint.ConsultVotingOptions);
+        server.entryPointSetter(VotingKiosk.EntryPoint.ConfirmVotingOption);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class ConsultVotOptEntryPointTest implements VotingKioskTest {
     @Override
     @Test
     public void initOptionsNavigation() throws ProceduralException {
-        assertThrows(ProceduralException.class,() -> {server.initOptionsNavigation();});
+        assertThrows(ProceduralException.class, () -> {server.initOptionsNavigation();});
     }
 
     @Override
@@ -82,6 +83,6 @@ public class ConsultVotOptEntryPointTest implements VotingKioskTest {
     @Override
     @Test
     public void confirmVotingOption() throws ProceduralException, ConnectException {
-        assertThrows(ProceduralException.class, () -> {server.confirmVotingOption('v');});
+        assertDoesNotThrow(() -> {server.confirmVotingOption('v');});
     }
 }
