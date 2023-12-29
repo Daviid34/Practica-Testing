@@ -39,35 +39,30 @@ public class VotingKioskBasicTest implements VotingKioskTest {
         assertDoesNotThrow(() ->{server.initVoting();});
     }
 
-    @Override
     @Test
     public void setDocumentTest() {
         initVotingTest();
         assertDoesNotThrow(() -> {server.setDocument('n');});
     }
 
-    @Override
     @Test
     public void enterAccountTest() {
         setDocumentTest();
         assertDoesNotThrow(()->{server.enterAccount("David", new Password("Password123-"));});
     }
 
-    @Override
     @Test
     public void confirmIdentifTest() {
         enterAccountTest();
         assertDoesNotThrow(() -> {server.confirmIdentif('v');});
     }
 
-    @Override
     @Test
     public void enterNifTest() {
         confirmIdentifTest();
         assertDoesNotThrow(()-> {server.enterNif(new Nif("12345678K"));});
     }
 
-    @Override
     @Test
     public void initOptionsNavigationTest() {
         enterNifTest();
