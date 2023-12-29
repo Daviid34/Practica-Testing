@@ -1,4 +1,4 @@
-package evotingTest;
+package servicesTest;
 
 import data.Nif;
 import exceptions.InvalidFormatException;
@@ -6,6 +6,8 @@ import exceptions.NotEnabledException;
 import exceptions.NullNifException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import services.ElectoralOrganism;
+import services.ElectoralOrganismImpl;
 
 import java.net.ConnectException;
 import java.util.HashMap;
@@ -14,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ElectoralOrganismTest {
-    VotingKiosk server = new VotingKiosk();
+    ElectoralOrganism server;
 
     @BeforeEach
     void init() throws NullNifException, InvalidFormatException {
         HashMap<Nif, Boolean> canVoteHashMap = new HashMap<>();
         canVoteHashMap.put(new Nif("12345678K"), true);
-        server.setCanVoteHashMap(canVoteHashMap);
+        server = new ElectoralOrganismImpl(canVoteHashMap);
     }
 
     @Test

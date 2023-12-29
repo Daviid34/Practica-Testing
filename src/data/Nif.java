@@ -2,7 +2,6 @@ package data;
 
 import exceptions.InvalidFormatException;
 import exceptions.NullNifException;
-import java.util.Objects;
 
 import java.util.regex.Pattern;
 
@@ -13,31 +12,30 @@ final public class Nif {
         if (nif == null) {
             throw new NullNifException("The introduced NIF is NULL");
         }
-        if (!isValidNifFormat(nif)) {
+        this.nif = nif;
+        if (!isValidNifFormat()) {
             throw new InvalidFormatException("The NIF format is incorrect");
         }
-        this.nif = nif;
+
     }
 
     public String getNif() {
         return this.nif;
     }
 
-    public boolean isValidNifFormat(String nif) {
+    public boolean isValidNifFormat() {
         String nifPattern = "^[0-9]{8}[A-Za-z]$";
         return Pattern.matches(nifPattern, nif);
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || getClass() != other.getClass()) return false;
-        Nif n = (Nif)other;
+    public boolean equals (Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Nif n = (Nif) o;
         return nif.equals(n.nif);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(nif);
-    }
+    public int hashCode () { return nif.hashCode(); }
 }

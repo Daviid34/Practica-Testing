@@ -35,10 +35,12 @@ final public class Password {
     }
 
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Password pwd = (Password) o;
         return password.equals(pwd.password);
     }
+    @Override
+    public int hashCode () { return password.hashCode(); }
 }
