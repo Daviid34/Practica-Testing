@@ -1,13 +1,10 @@
-package evotingTest.votingKioskTest;
+package evotingTest;
 
 import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
-import evotingTest.interfaces.VotingKioskTest;
-import exceptions.InvalidFormatException;
-import exceptions.NullNifException;
-import exceptions.NullPasswordException;
+import exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.*;
@@ -16,8 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class VotingKioskBasicTest implements VotingKioskTest {
+public class VotingKioskBasicTest {
     private VotingKiosk server;
 
     @BeforeEach
@@ -54,6 +52,8 @@ public class VotingKioskBasicTest implements VotingKioskTest {
     @Test
     public void confirmIdentifTest() {
         enterAccountTest();
+        assertThrows(InvalidDNIDocumException.class, () -> {server.confirmIdentif('f');});
+        server.entryPointSetter(VotingKiosk.EntryPoint.ConfirmIdentif);
         assertDoesNotThrow(() -> {server.confirmIdentif('v');});
     }
 
@@ -69,7 +69,6 @@ public class VotingKioskBasicTest implements VotingKioskTest {
         assertDoesNotThrow(()-> {server.initOptionsNavigation();});
     }
 
-    @Override
     @Test
     public void consultVotingOptionTest() {
         initOptionsNavigationTest();
@@ -78,14 +77,12 @@ public class VotingKioskBasicTest implements VotingKioskTest {
         assertDoesNotThrow(() -> {server.consultVotingOption(party);});
     }
 
-    @Override
     @Test
     public void voteTest() {
         consultVotingOptionTest();
         assertDoesNotThrow(() -> {server.vote();});
     }
 
-    @Override
     @Test
     public void confirmVotingOptionTest() {
         voteTest();
