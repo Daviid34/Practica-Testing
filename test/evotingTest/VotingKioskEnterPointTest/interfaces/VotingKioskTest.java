@@ -11,21 +11,21 @@ import exceptions.ProceduralException;
 import java.net.ConnectException;
 
 public interface VotingKioskTest {
-    void setDocument(char c) throws ProceduralException;
+    void setDocument() throws ProceduralException;
 
-    void enterAccount(String login, Password pssw) throws InvalidAccountException, ProceduralException;
+    void enterAccount() throws InvalidAccountException, ProceduralException;
 
 
-    void confirmIdentif(char conf) throws InvalidDNIDocumException, ProceduralException;
+    void confirmIdentif() throws InvalidDNIDocumException, ProceduralException;
 
-    void enterNif(Nif nif) throws NotEnabledException, ConnectException, ProceduralException;
+    void enterNif() throws NotEnabledException, ConnectException, ProceduralException;
 
     void initOptionsNavigation() throws ProceduralException;
 
 
-    void consultVotingOption(VotingOption vopt) throws ProceduralException;
+    void consultVotingOption() throws ProceduralException;
 
     void vote() throws ProceduralException;
 
-    void confirmVotingOption(char conf) throws ProceduralException, ConnectException;
+    void confirmVotingOption() throws ProceduralException, ConnectException;
 }

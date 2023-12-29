@@ -24,7 +24,7 @@ public class VotingKiosk {
 
     PartyListServer partyListServer;
     List<VotingOption> parties;
-    VotingOption partyChosed;
+    VotingOption partyChosen;
 
     Nif voter;
 
@@ -34,6 +34,9 @@ public class VotingKiosk {
         this.scrutiny = scrutiny;
         this.localService = localService;
         this.electoralOrganism = electoralOrganism;
+
+        partyListServer = new PartyListServer();
+        parties = partyListServer.getList();
     }
 
     private static class Context{
@@ -94,8 +97,6 @@ public class VotingKiosk {
     public void initOptionsNavigation() throws ProceduralException {
         //Check that enterNif was called early
         if (context.entryPoint != EntryPoint.InitOptionsNavigation) throw new ProceduralException("ERROR: enterNif wasn't called earlier");
-        partyListServer = new PartyListServer();
-        parties = partyListServer.getList();
         scrutiny.initVoteCount(parties);
         showParties(parties);
         context.entryPoint = EntryPoint.ConsultVotingOptions;
@@ -109,14 +110,14 @@ public class VotingKiosk {
         System.out.println();
         System.out.println("Information of the party specified:");
         System.out.println(vopt);
-        partyChosed = vopt;
+        partyChosen = vopt;
         context.entryPoint = EntryPoint.Vote;
     }
 
     public void vote() throws ProceduralException {
         //Check that consultOption was called early
         if (context.entryPoint != EntryPoint.Vote) throw new ProceduralException("ERROR: consultVotingOption wasn't called earlier");
-        System.out.println("Please confirm that your Voting Option is indeed: " + partyChosed.getParty());
+        System.out.println("Please confirm that your Voting Option is indeed: " + partyChosen.getParty());
         context.entryPoint = EntryPoint.ConfirmVotingOption;
     }
 
@@ -124,14 +125,14 @@ public class VotingKiosk {
         //Check that vote was called early
         if (context.entryPoint != EntryPoint.ConfirmVotingOption) throw new ProceduralException("ERROR: vote wasn't called earlier");
         if (conf == 'f'){
-            partyChosed = null;
+            partyChosen = null;
             //In case it's not confirmed, show again the voting options are anable to go back to ConsultVotingOptions
             showParties(parties);
             context.entryPoint = EntryPoint.ConsultVotingOptions;
         }
         if (conf == 'v') {
             System.out.println("\nVote confirmed!");
-            scrutiny.scrutinize(partyChosed);
+            scrutiny.scrutinize(partyChosen);
             electoralOrganism.disableVoter(voter);
         }
     }
