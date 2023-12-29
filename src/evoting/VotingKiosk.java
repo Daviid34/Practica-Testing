@@ -123,7 +123,10 @@ public class VotingKiosk {
     public void confirmVotingOption(char conf) throws ProceduralException, ConnectException {
         //Check that vote was called early
         if (context.entryPoint != EntryPoint.ConfirmVotingOption) throw new ProceduralException("ERROR: vote wasn't called earlier");
-        if (conf == 'f') partyChosed = null;
+        if (conf == 'f'){
+            partyChosed = null;
+            context.entryPoint = EntryPoint.ConsultVotingOptions;
+        }
         if (conf == 'v') {
             System.out.println("\nVote confirmed!");
             scrutiny.scrutinize(partyChosed);
