@@ -1,9 +1,9 @@
 package services;
 
 import data.Nif;
-import exceptions.ConnectException;
 import exceptions.NotEnabledException;
 
+import java.net.ConnectException;
 import java.util.HashMap;
 
 public class ElectoralOrganismImpl implements ElectoralOrganism {
@@ -20,7 +20,7 @@ public class ElectoralOrganismImpl implements ElectoralOrganism {
     }
 
     @Override
-    public void disableVoter(Nif nif) throws ConnectException {
+        public void disableVoter(Nif nif) throws ConnectException {
         canVoteHashMap.replace(nif, false);
     }
 }
