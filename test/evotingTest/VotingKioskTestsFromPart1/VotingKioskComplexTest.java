@@ -1,4 +1,4 @@
-package evotingTest;
+package evotingTest.VotingKioskTestsFromPart1;
 
 // The goal of this class is to test the navigation between the methods in the loop without throwing the ProceduralException
 

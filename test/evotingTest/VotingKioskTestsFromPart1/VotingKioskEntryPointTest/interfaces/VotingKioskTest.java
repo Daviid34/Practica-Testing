@@ -1,8 +1,5 @@
-package evotingTest.VotingKioskEnterPointTest.interfaces;
+package evotingTest.VotingKioskTestsFromPart1.VotingKioskEntryPointTest.interfaces;
 
-import data.Nif;
-import data.Password;
-import data.VotingOption;
 import exceptions.InvalidAccountException;
 import exceptions.InvalidDNIDocumException;
 import exceptions.NotEnabledException;

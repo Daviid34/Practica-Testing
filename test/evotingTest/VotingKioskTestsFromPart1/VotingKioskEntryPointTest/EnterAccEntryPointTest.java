@@ -1,10 +1,10 @@
-package evotingTest.VotingKioskEnterPointTest;
+package evotingTest.VotingKioskTestsFromPart1.VotingKioskEntryPointTest;
 
 import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
-import evotingTest.VotingKioskEnterPointTest.interfaces.VotingKioskTest;
+import evotingTest.VotingKioskTestsFromPart1.VotingKioskEntryPointTest.interfaces.VotingKioskTest;
 import exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EnterNifEntryPointTest implements VotingKioskTest {
+public class EnterAccEntryPointTest implements VotingKioskTest {
     private VotingKiosk server;
     List<VotingOption> parties;
 
@@ -35,7 +35,7 @@ public class EnterNifEntryPointTest implements VotingKioskTest {
         server = new VotingKiosk(scrutiny, localService, electoralOrganism);
         server.initVoting();
         parties = server.getParties();
-        server.entryPointSetter(VotingKiosk.EntryPoint.EnterNif);
+        server.entryPointSetter(VotingKiosk.EntryPoint.EnterAccount);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class EnterNifEntryPointTest implements VotingKioskTest {
 
     @Override
     @Test
-    public void enterAccount() throws InvalidAccountException, ProceduralException {
-        assertThrows(ProceduralException.class, ()-> {server.enterAccount("Maria", new Password("Password123-"));});
+    public void enterAccount() {
+        assertDoesNotThrow(()-> {server.enterAccount("Maria", new Password("Password123-"));});
     }
 
     @Override
@@ -59,7 +59,7 @@ public class EnterNifEntryPointTest implements VotingKioskTest {
     @Override
     @Test
     public void enterNif() throws NotEnabledException, ConnectException, ProceduralException {
-        assertDoesNotThrow(()-> {server.enterNif(new Nif("12345678K"));});
+        assertThrows(ProceduralException.class, ()-> {server.enterNif(new Nif("12345678K"));});
     }
 
     @Override

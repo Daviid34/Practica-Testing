@@ -1,17 +1,15 @@
 package evoting;
 
-import data.Nif;
-import data.Password;
-import data.VotingOption;
+import data.*;
 import exceptions.*;
 import mocks.PartyListServer;
 
-import exceptions.InvalidAccountException;
-import exceptions.InvalidDNIDocumException;
-import exceptions.NotEnabledException;
 import services.ElectoralOrganism;
 import services.LocalService;
 import services.Scrutiny;
+
+import evoting.biometricdataperipheral.HumanBiometricScanner;
+import evoting.biometricdataperipheral.PassportBiometricReader;
 
 import java.net.ConnectException;
 import java.util.List;
@@ -28,7 +26,12 @@ public class VotingKiosk {
 
     Nif voter;
 
+    BiometricData humanBiometricData;
+    BiometricData passportBiometricData;
+    char explicitConsent;
 
+    HumanBiometricScanner humanBiometricScanner;
+    PassportBiometricReader passportBiometricReader;
 
     public VotingKiosk(Scrutiny scrutiny, LocalService localService, ElectoralOrganism electoralOrganism) {
         this.scrutiny = scrutiny;
@@ -47,12 +50,15 @@ public class VotingKiosk {
     }
 
     public enum EntryPoint {
-        SetDocument, EnterAccount, ConfirmIdentif, EnterNif, InitOptionsNavigation, ConsultVotingOptions, Vote, ConfirmVotingOption
+        SetDocument, EnterAccount, ConfirmIdentif, EnterNif,
+        InitOptionsNavigation, ConsultVotingOptions, Vote, ConfirmVotingOption,
+        VerifyBiometricData, RemoveBiometricData, GrantExplicitConsent, ReadPassport,
+        ReadFaceBiometrics, ReadFingerPrintBiometrics;
     }
 
     public void initVoting() {
         System.out.println("\rInitializing... ");
-        System.out.println("Choose an identificative document:\nNIF -> n \nPassport -> p\n");
+        System.out.println("Choose an identification document:\nNIF -> n \nPassport -> p\n");
         context = new Context();
     }
 
@@ -135,14 +141,16 @@ public class VotingKiosk {
             scrutiny.scrutinize(partyChosen);
             electoralOrganism.disableVoter(voter);
         }
+        context.entryPoint = EntryPoint.GrantExplicitConsent;
     }
 
     /*
     ----------------------------------------------ADDITIONAL-METHODS--------------------------------------------------------
-     */
+    */
+
     public void showParties(List<VotingOption> parties) {
         System.out.println();
-        System.out.println("Here you have the list of able parties to vote");
+        System.out.println("Here you have the list of available parties to vote");
         for (VotingOption party : parties) {
             System.out.println(party.toString());
         }
@@ -155,4 +163,69 @@ public class VotingKiosk {
     public void entryPointSetter(EntryPoint entryPoint) {
         context.entryPoint = entryPoint;
     }
+
+    /*
+    ----------------------------------------------PART-2--------------------------------------------------------
+    */
+
+    private void verifyBiometricData(BiometricData humanBioD, BiometricData passpBioD) throws ProceduralException, BiometricVerificationFailedException {
+        if (!humanBioD.equals(passpBioD)) {
+            removeBiometricData();
+            throw new BiometricVerificationFailedException("ERROR: biometric data does not match");
+        }
+        removeBiometricData();
+    }
+
+    private void removeBiometricData() throws ProceduralException {
+        humanBiometricData = null;
+        passportBiometricData = null;
+    }
+
+    public void grantExplicitConsent(char cons) throws ProceduralException {
+        //Check that removeBiometricData was called early
+        if (context.entryPoint != EntryPoint.GrantExplicitConsent) throw new ProceduralException("ERROR: removeBiometricData wasn't called earlier");
+        context.entryPoint = EntryPoint.ReadPassport;
+        System.out.println("Proceeding to read passport");
+    }
+
+    public void readPassport ()
+            throws NotValidPassportException, PassportBiometricReadingException, ProceduralException {
+        //Check that grantExplicitConsent was called early
+        if (context.entryPoint != EntryPoint.ReadPassport) throw new ProceduralException("ERROR: grantExplicitConsent wasn't called earlier");
+        passportBiometricReader.validatePassport();
+        if(passportBiometricData == null) {
+            throw new PassportBiometricReadingException("ERROR: passport cannot be read");
+        }
+        System.out.println("Proceeding to read facial biometrics");
+        context.entryPoint = EntryPoint.ReadFaceBiometrics;
+    }
+
+    public void readFaceBiometrics () throws HumanBiometricScanningException, ProceduralException {
+        //Check that readPassport was called early
+        if (context.entryPoint != EntryPoint.ReadFaceBiometrics) throw new ProceduralException("ERROR: readPassport wasn't called earlier");
+        if(humanBiometricData.getFacialBiometric() != humanBiometricScanner.scanFaceBiometrics()){
+            throw new HumanBiometricScanningException("ERROR: Error in the scan process");
+        }
+        System.out.println("Proceeding to read fingerprint biometrics");
+        context.entryPoint = EntryPoint.ReadFingerPrintBiometrics;
+    }
+
+    public void readFingerPrintBiometrics()
+            throws NotEnabledException, HumanBiometricScanningException,
+                BiometricVerificationFailedException, ConnectException, ProceduralException {
+        //Check that readFaceBiometrics was called early
+        if (context.entryPoint != EntryPoint.ReadFingerPrintBiometrics) throw new ProceduralException("ERROR: readFaceBiometrics wasn't called earlier");
+        if (explicitConsent != 'v') {
+            throw new BiometricVerificationFailedException("ERROR: biometric verification failed");
+        }
+        if(humanBiometricData.getFingerprintBiometric() != humanBiometricScanner.scanFingerprintBiometrics()) {
+            throw new HumanBiometricScanningException("ERROR: Fingerprint biometric does not match");
+        }
+        if(humanBiometricData.getFacialBiometric() != humanBiometricScanner.scanFaceBiometrics()) {
+            throw new HumanBiometricScanningException("ERROR: Facial biometric does not match");
+        }
+        verifyBiometricData(humanBiometricData, passportBiometricData);
+        System.out.println("Verification ended successfully");
+    }
+
 }

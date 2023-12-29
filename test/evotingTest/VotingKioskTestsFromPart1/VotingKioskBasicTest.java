@@ -1,4 +1,4 @@
-package evotingTest;
+package evotingTest.VotingKioskTestsFromPart1;
 
 import data.Nif;
 import data.Password;
