@@ -34,6 +34,9 @@ public class VotingKiosk {
         this.scrutiny = scrutiny;
         this.localService = localService;
         this.electoralOrganism = electoralOrganism;
+
+        partyListServer = new PartyListServer();
+        parties = partyListServer.getList();
     }
 
     private static class Context{
@@ -94,8 +97,6 @@ public class VotingKiosk {
     public void initOptionsNavigation() throws ProceduralException {
         //Check that enterNif was called early
         if (context.entryPoint != EntryPoint.InitOptionsNavigation) throw new ProceduralException("ERROR: enterNif wasn't called earlier");
-        partyListServer = new PartyListServer();
-        parties = partyListServer.getList();
         scrutiny.initVoteCount(parties);
         showParties(parties);
         context.entryPoint = EntryPoint.ConsultVotingOptions;
@@ -109,7 +110,7 @@ public class VotingKiosk {
         System.out.println();
         System.out.println("Information of the party specified:");
         System.out.println(vopt);
-        partyChosed = vopt;
+        partyChosed= vopt;
         context.entryPoint = EntryPoint.Vote;
     }
 
@@ -154,4 +155,5 @@ public class VotingKiosk {
     public void entryPointSetter(EntryPoint entryPoint) {
         context.entryPoint = entryPoint;
     }
+
 }

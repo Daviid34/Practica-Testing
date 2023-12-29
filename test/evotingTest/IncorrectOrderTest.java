@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import services.*;
 import java.net.ConnectException;
 
-import java.net.ConnectException;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
