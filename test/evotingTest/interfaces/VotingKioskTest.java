@@ -15,21 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public interface VotingKioskTest {
     @Test
-    void setDocumentTest() ;
-
-    @Test
-    void enterAccountTest();
-
-    @Test
-    void confirmIdentifTest() throws ProceduralException;
-
-    @Test
-    void enterNifTest() throws ProceduralException, InvalidFormatException, NullPasswordException, InvalidAccountException;
-
-    @Test
-    void initOptionsNavigationTest() throws ProceduralException, InvalidFormatException, NullPasswordException, InvalidAccountException, InvalidDNIDocumException;
-
-    @Test
     void consultVotingOptionTest() throws ProceduralException, InvalidFormatException, NullPasswordException, InvalidAccountException, InvalidDNIDocumException, NullNifException, NotEnabledException, ConnectException;
 
     @Test
