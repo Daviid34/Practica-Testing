@@ -20,6 +20,15 @@ public class VotingKiosk {
     Scrutiny scrutiny;
     LocalService localService;
     ElectoralOrganism electoralOrganism;
+    Context context;
+
+    PartyListServer partyListServer;
+    List<VotingOption> parties;
+    VotingOption partyChosed;
+
+    Nif voter;
+
+
 
     public VotingKiosk(Scrutiny scrutiny, LocalService localService, ElectoralOrganism electoralOrganism) {
         this.scrutiny = scrutiny;
@@ -27,19 +36,29 @@ public class VotingKiosk {
         this.electoralOrganism = electoralOrganism;
     }
 
+    private static class Context{
+        VotingKiosk.EntryPoint entryPoint;
+        public Context() {
+            entryPoint = EntryPoint.SetDocument;
+        }
+    }
+
+    private enum EntryPoint {
+        SetDocument, EnterAccount, ConfirmIdentif, EnterNif, InitOptionsNavigation, ConsultVotingOptions, Vote, ConfirmVotingOption
+    }
+
     public void initVoting() {
         System.out.println("\rInitializing... ");
         System.out.println("Choose an identificative document:\nNIF -> n \nPassport -> p\n");
-        opt = 'a';
+        context = new Context();
     }
 
-    char opt;
     public void setDocument(char c) throws ProceduralException {
         //Check if initVoting was called early
-        if (opt != 'a') {
+        if (context.entryPoint != EntryPoint.SetDocument) {
             throw new ProceduralException("ERROR: initVoting wasn't called earlier");
         }
-        opt = c;
+        context.entryPoint = EntryPoint.EnterAccount;
         //In case the NIF option was chosen
         if (c == 'n') System.out.println("Support staff is required");
 
@@ -47,72 +66,67 @@ public class VotingKiosk {
 
     public void enterAccount(String login, Password pssw) throws InvalidAccountException, ProceduralException {
         //Check that setDocument was called early
-        if (opt != 'n') throw new ProceduralException("ERROR: setDocument wasn't called earlier");
+        if (context.entryPoint != EntryPoint.EnterAccount) throw new ProceduralException("ERROR: setDocument wasn't called earlier");
         localService.verifyAccount(login, pssw);
         System.out.println("The authentication was succesful");
-        conf = 'f';
+        context.entryPoint = EntryPoint.ConfirmIdentif;
     }
 
-    char conf = ' ';
+
     public void confirmIdentif(char conf) throws InvalidDNIDocumException, ProceduralException {
         //Check that enterAccount was called early
-        if (this.conf != 'f') throw new ProceduralException("ERROR: enterAccount wasn't called earlier");
+        if (context.entryPoint != EntryPoint.ConfirmIdentif) throw new ProceduralException("ERROR: enterAccount wasn't called earlier");
         if (conf == 'f') throw new InvalidDNIDocumException("ERROR: invalid DNI documentation");
-        this.conf = conf;
         System.out.println("Enter the NIF");
+        context.entryPoint = EntryPoint.EnterNif;
     }
 
-    Nif voter;
     public void enterNif(Nif nif) throws NotEnabledException, ConnectException, ProceduralException {
         //Check that confirmIdentif was called early
-        if (conf != 'v') throw new ProceduralException("ERROR: confirmIdentif wasn't called earlier");
+        if (context.entryPoint != EntryPoint.EnterNif) throw new ProceduralException("ERROR: confirmIdentif wasn't called earlier");
         nif.isValidNifFormat();
         electoralOrganism.canVote(nif);
         voter = nif;
         System.out.println("Verification of vote OK, you may now initialize the option navigation");
+        context.entryPoint = EntryPoint.InitOptionsNavigation;
     }
-
-    PartyListServer partyListServer;
-    List<VotingOption> parties;
 
     public void initOptionsNavigation() throws ProceduralException {
         //Check that enterNif was called early
-        if (voter == null) throw new ProceduralException("ERROR: enterNif wasn't called earlier");
+        if (context.entryPoint != EntryPoint.InitOptionsNavigation) throw new ProceduralException("ERROR: enterNif wasn't called earlier");
         partyListServer = new PartyListServer();
         parties = partyListServer.getList();
         scrutiny.initVoteCount(parties);
         showParties(parties);
-        partyChosed = null;
+        context.entryPoint = EntryPoint.ConsultVotingOptions;
     }
 
-    VotingOption partyChosed;
 
     public void consultVotingOption(VotingOption vopt) throws ProceduralException {
         //Check that initOptionsNavigation was called early
-        if (partyListServer == null)
+        if (context.entryPoint != EntryPoint.ConsultVotingOptions && context.entryPoint != EntryPoint.ConfirmVotingOption)
             throw new ProceduralException("ERROR: initOptionsNavigation wasn't called earlier");
         System.out.println();
         System.out.println("Information of the party specified:");
         System.out.println(vopt);
         partyChosed = vopt;
+        context.entryPoint = EntryPoint.Vote;
     }
-
-    VotingOption party;
 
     public void vote() throws ProceduralException {
         //Check that consultOption was called early
-        if (partyChosed == null) throw new ProceduralException("ERROR: consultVotingOption wasn't called earlier");
-        party = partyChosed;
-        System.out.println("Please confirm that your Voting Option is indeed: " + party.getParty());
+        if (context.entryPoint != EntryPoint.Vote) throw new ProceduralException("ERROR: consultVotingOption wasn't called earlier");
+        System.out.println("Please confirm that your Voting Option is indeed: " + partyChosed.getParty());
+        context.entryPoint = EntryPoint.ConfirmVotingOption;
     }
 
     public void confirmVotingOption(char conf) throws ProceduralException, ConnectException {
         //Check that vote was called early
-        if (party == null) throw new ProceduralException("ERROR: vote wasn't called earlier");
-        if (conf == 'f') party = null;
+        if (context.entryPoint != EntryPoint.ConfirmVotingOption) throw new ProceduralException("ERROR: vote wasn't called earlier");
+        if (conf == 'f') partyChosed = null;
         if (conf == 'v') {
             System.out.println("\nVote confirmed!");
-            scrutiny.scrutinize(party);
+            scrutiny.scrutinize(partyChosed);
             electoralOrganism.disableVoter(voter);
         }
     }
