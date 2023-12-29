@@ -5,10 +5,15 @@ import data.Password;
 import data.VotingOption;
 import exceptions.*;
 import mocks.PartyListServer;
+
+import exceptions.InvalidAccountException;
+import exceptions.InvalidDNIDocumException;
+import exceptions.NotEnabledException;
 import services.ElectoralOrganism;
 import services.LocalService;
 import services.Scrutiny;
 
+import java.net.ConnectException;
 import java.util.List;
 
 public class VotingKiosk {
@@ -40,19 +45,20 @@ public class VotingKiosk {
 
     }
 
-    public void enterAccount (String login, Password pssw) throws InvalidAccountException, ProceduralException {
+    public void enterAccount(String login, Password pssw) throws InvalidAccountException, ProceduralException {
         //Check that setDocument was called early
-        if (opt != 'n') throw new  ProceduralException("ERROR: setDocument wasn't called earlier");
+        if (opt != 'n') throw new ProceduralException("ERROR: setDocument wasn't called earlier");
         localService.verifyAccount(login, pssw);
         System.out.println("The authentication was succesful");
         conf = 'f';
     }
+
     char conf = ' ';
     public void confirmIdentif(char conf) throws InvalidDNIDocumException, ProceduralException {
         //Check that enterAccount was called early
         if (this.conf != 'f') throw new ProceduralException("ERROR: enterAccount wasn't called earlier");
-        this.conf = conf;
         if (conf == 'f') throw new InvalidDNIDocumException("ERROR: invalid DNI documentation");
+        this.conf = conf;
         System.out.println("Enter the NIF");
     }
 
@@ -68,9 +74,10 @@ public class VotingKiosk {
 
     PartyListServer partyListServer;
     List<VotingOption> parties;
+
     public void initOptionsNavigation() throws ProceduralException {
         //Check that enterNif was called early
-        if(voter == null) throw new ProceduralException("ERROR: enterNif wasn't called earlier");
+        if (voter == null) throw new ProceduralException("ERROR: enterNif wasn't called earlier");
         partyListServer = new PartyListServer();
         parties = partyListServer.getList();
         scrutiny.initVoteCount(parties);
@@ -79,15 +86,19 @@ public class VotingKiosk {
     }
 
     VotingOption partyChosed;
+
     public void consultVotingOption(VotingOption vopt) throws ProceduralException {
         //Check that initOptionsNavigation was called early
-        if (partyListServer == null) throw new ProceduralException("ERROR: initOptionsNavigation wasn't called earlier");
+        if (partyListServer == null)
+            throw new ProceduralException("ERROR: initOptionsNavigation wasn't called earlier");
         System.out.println();
         System.out.println("Information of the party specified:");
         System.out.println(vopt);
         partyChosed = vopt;
     }
+
     VotingOption party;
+
     public void vote() throws ProceduralException {
         //Check that consultOption was called early
         if (partyChosed == null) throw new ProceduralException("ERROR: consultVotingOption wasn't called earlier");
@@ -95,7 +106,7 @@ public class VotingKiosk {
         System.out.println("Please confirm that your Voting Option is indeed: " + party.getParty());
     }
 
-    public void confirmVotingOption (char conf) throws ProceduralException, ConnectException {
+    public void confirmVotingOption(char conf) throws ProceduralException, ConnectException {
         //Check that vote was called early
         if (party == null) throw new ProceduralException("ERROR: vote wasn't called earlier");
         if (conf == 'f') party = null;
@@ -105,9 +116,10 @@ public class VotingKiosk {
             electoralOrganism.disableVoter(voter);
         }
     }
-/*
-----------------------------------------------ADDITIONAL-METHODS--------------------------------------------------------
- */
+
+    /*
+    ----------------------------------------------ADDITIONAL-METHODS--------------------------------------------------------
+     */
     public void showParties(List<VotingOption> parties) {
         System.out.println();
         System.out.println("Here you have the list of able parties to vote");
@@ -121,5 +133,3 @@ public class VotingKiosk {
         return parties;
     }
 }
-
-
