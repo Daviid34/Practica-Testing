@@ -1,7 +1,7 @@
 package services;
 
+import java.net.ConnectException;
 import data.Nif;
-import exceptions.ConnectException;
 import exceptions.NotEnabledException;
 
 public interface ElectoralOrganism {

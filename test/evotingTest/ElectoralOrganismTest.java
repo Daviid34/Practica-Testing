@@ -1,14 +1,13 @@
 package evotingTest;
 
 import data.Nif;
-import evoting.VotingKiosk;
-import exceptions.ConnectException;
 import exceptions.InvalidFormatException;
 import exceptions.NotEnabledException;
 import exceptions.NullNifException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.ConnectException;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
