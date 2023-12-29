@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//The goal of this test is to check the behavior in fron of an empty List of parties
+//The goal of this test is to check the behavior in front of an empty List of parties
 public class ScrutinyEmptyTest implements ScrutinyTest {
     private Scrutiny server;
 

@@ -13,7 +13,7 @@ public class PasswordTest {
 
     @BeforeEach
     void init() throws InvalidFormatException, NullPasswordException {
-        password = new Password("My_password");
+        password = new Password("My_Password");
     }
 
     @Test
@@ -38,13 +38,13 @@ public class PasswordTest {
 
     @Test
     public void testEqualPasswordWithSamePasswords() throws InvalidFormatException, NullPasswordException {
-        Password pwd2 = new Password("My_password");
+        Password pwd2 = new Password("My_Password");
         assertTrue(password.equals(pwd2));
     }
 
     @Test
     public void testEqualPasswordWithDifferentPasswords() throws InvalidFormatException, NullPasswordException {
-        Password pwd2 = new Password("Your_password");
+        Password pwd2 = new Password("Your_Password");
         assertFalse(password.equals(pwd2));
     }
 
@@ -55,7 +55,7 @@ public class PasswordTest {
 
     @Test
     public void testEqualPasswordWithDifferentClass() {
-        assertFalse(password.equals("My_password"));
+        assertFalse(password.equals("My_Password"));
     }
 
 }

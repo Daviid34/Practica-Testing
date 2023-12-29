@@ -128,7 +128,6 @@ public class VotingKiosk {
         }
     }
 
-
     public List<VotingOption> getParties() {
         return parties;
     }

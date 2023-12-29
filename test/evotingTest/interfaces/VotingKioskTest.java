@@ -6,6 +6,7 @@ import data.VotingOption;
 import evoting.VotingKiosk;
 import exceptions.*;
 import org.junit.jupiter.api.Test;
+import java.net.ConnectException;
 
 import java.net.ConnectException;
 import java.util.List;
