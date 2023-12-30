@@ -22,7 +22,7 @@ public class VotingKioskComplexTest {
     private VotingKiosk server;
 
     @BeforeEach
-    void init() throws NullNifException, InvalidFormatException, NullPasswordException, ProceduralException, InvalidAccountException, InvalidDNIDocumException, NotEnabledException, ConnectException {
+    void init() throws NullNifException, InvalidFormatException, NullPasswordException, ProceduralException, InvalidAccountException, InvalidDNIDocumException, NotEnabledException, ConnectException, InvalidCharacterException {
         HashMap<Nif, Boolean> canVoteHashMap = new HashMap<>();
         canVoteHashMap.put(new Nif("12345678K"), true);
         HashMap<String, Password> loginHashMap = new HashMap<>();
