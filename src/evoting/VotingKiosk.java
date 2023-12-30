@@ -46,7 +46,7 @@ public class VotingKiosk {
         SetDocument, EnterAccount, ConfirmIdentif, EnterNif,
         InitOptionsNavigation, ConsultVotingOptions, Vote, ConfirmVotingOption,
         GrantExplicitConsent, ReadPassport,
-        ReadFaceBiometrics, ReadFingerPrintBiometrics, ReadFaceBiometric;
+        ReadFaceBiometrics, ReadFingerPrintBiometrics;
     }
 
     public void initVoting() {
@@ -151,7 +151,7 @@ public class VotingKiosk {
     /*
     ----------------------------------------------ADDITIONAL-METHODS--------------------------------------------------------
     */
-
+    //All methods are implemented in order to ease the test
     public void showParties(List<VotingOption> parties) {
         System.out.println();
         System.out.println("Here you have the list of available parties to vote");
@@ -168,11 +168,16 @@ public class VotingKiosk {
         context.entryPoint = entryPoint;
     }
 
+    public void setHumanBiometricScanner(HumanBiometricScanner humanBiometricScanner) {this.humanBiometricScanner = humanBiometricScanner;}
+
+    public void setPassportBiometricReader(PassportBiometricReader passportBiometricReader) {this.passportBiometricReader = passportBiometricReader;}
+
     /*
     ----------------------------------------------PART-2--------------------------------------------------------
     */
-    BiometricData humanBiometricData;
     BiometricData passportBiometricData;
+    BiometricData humanBiometricData;
+    SingleBiometricData faceData;
 
     HumanBiometricScanner humanBiometricScanner;
     PassportBiometricReader passportBiometricReader;
@@ -199,13 +204,14 @@ public class VotingKiosk {
         if (passportBiometricData == null) throw  new PassportBiometricReadingException("ERROR: Critical failure reading the passport");
         System.out.println("Validity and reading of parameters OK");
         voter = passportBiometricReader.getNifWithOCR();
-        context.entryPoint = EntryPoint.ReadFaceBiometric;
+        context.entryPoint = EntryPoint.ReadFaceBiometrics;
     }
 
     public void readFaceBiometrics () throws HumanBiometricScanningException, ProceduralException {
         //Check that readPassport was called early
         if (context.entryPoint != EntryPoint.ReadFaceBiometrics) throw new ProceduralException("ERROR: readPassport wasn't called earlier");
-        if(humanBiometricData.getFacialBiometric() != humanBiometricScanner.scanFaceBiometrics()){
+        faceData = humanBiometricScanner.scanFaceBiometrics();
+        if(passportBiometricData.getFacialBiometric() != faceData){
             throw new HumanBiometricScanningException("ERROR: Error in the scan process");
         }
         System.out.println("Proceeding to read fingerprint biometrics");
@@ -217,9 +223,11 @@ public class VotingKiosk {
             BiometricVerificationFailedException, ConnectException, ProceduralException {
         //Check that readFaceBiometrics was called early
         if (context.entryPoint != EntryPoint.ReadFingerPrintBiometrics) throw new ProceduralException("ERROR: readFaceBiometrics wasn't called earlier");
-        if(humanBiometricData.getFingerprintBiometric() != humanBiometricScanner.scanFingerprintBiometrics()) {
+        SingleBiometricData fingerPrintData = humanBiometricScanner.scanFingerprintBiometrics();
+        if(passportBiometricData.getFingerprintBiometric() != fingerPrintData) {
             throw new HumanBiometricScanningException("ERROR: Fingerprint biometric does not match");
         }
+        humanBiometricData = new BiometricData(faceData, fingerPrintData);
         verifyBiometricData(humanBiometricData, passportBiometricData);
         removeBiometricData();
         electoralOrganism.canVote(voter);
@@ -237,6 +245,7 @@ public class VotingKiosk {
     }
 
     private void removeBiometricData() {
+        faceData = null;
         humanBiometricData = null;
         passportBiometricData = null;
     }
