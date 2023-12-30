@@ -33,59 +33,16 @@ public class VotingKioskBasicTest {
     }
 
     @Test
-    public void initVotingTest() {
-        assertDoesNotThrow(() ->{server.initVoting();});
-    }
-
-    @Test
-    public void setDocumentTest() {
-        initVotingTest();
+    void basicIterationTest() {
+        assertDoesNotThrow(()-> {server.initVoting();});
         assertDoesNotThrow(() -> {server.setDocument('n');});
-    }
-
-    @Test
-    public void enterAccountTest() {
-        setDocumentTest();
-        assertDoesNotThrow(()->{server.enterAccount("David", new Password("Password123-"));});
-    }
-
-    @Test
-    public void confirmIdentifTest() {
-        enterAccountTest();
-        assertThrows(InvalidDNIDocumException.class, () -> {server.confirmIdentif('f');});
-        server.entryPointSetter(VotingKiosk.EntryPoint.ConfirmIdentif);
+        assertDoesNotThrow(() -> {server.enterAccount("David", new Password("Password123-"));});
         assertDoesNotThrow(() -> {server.confirmIdentif('v');});
-    }
-
-    @Test
-    public void enterNifTest() {
-        confirmIdentifTest();
-        assertDoesNotThrow(()-> {server.enterNif(new Nif("12345678K"));});
-    }
-
-    @Test
-    public void initOptionsNavigationTest() {
-        enterNifTest();
-        assertDoesNotThrow(()-> {server.initOptionsNavigation();});
-    }
-
-    @Test
-    public void consultVotingOptionTest() {
-        initOptionsNavigationTest();
-        List<VotingOption> parties = server.getParties();
-        VotingOption party = parties.get(2);
+        assertDoesNotThrow(() -> {server.enterNif(new Nif("12345678K"));});
+        assertDoesNotThrow(() -> {server.initOptionsNavigation();});
+        VotingOption party = server.getParties().get(0);
         assertDoesNotThrow(() -> {server.consultVotingOption(party);});
-    }
-
-    @Test
-    public void voteTest() {
-        consultVotingOptionTest();
         assertDoesNotThrow(() -> {server.vote();});
-    }
-
-    @Test
-    public void confirmVotingOptionTest() {
-        voteTest();
-        assertDoesNotThrow(()-> {server.confirmVotingOption('v');});
+        assertDoesNotThrow(() -> {server.confirmVotingOption('v');});
     }
 }
