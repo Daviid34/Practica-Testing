@@ -44,5 +44,17 @@ public class VotingKioskBasicTest {
         assertDoesNotThrow(() -> {server.consultVotingOption(party);});
         assertDoesNotThrow(() -> {server.vote();});
         assertDoesNotThrow(() -> {server.confirmVotingOption('v');});
+
+    }
+
+    @Test
+    void invalidCharTest() {
+        server.initVoting();
+        server.entryPointSetter(VotingKiosk.EntryPoint.SetDocument);
+        assertThrows(InvalidCharacterException.class, () -> {server.setDocument('a');});
+        server.entryPointSetter(VotingKiosk.EntryPoint.ConfirmIdentif);
+        assertThrows(InvalidCharacterException.class, () ->{server.confirmIdentif('a');});
+        server.entryPointSetter(VotingKiosk.EntryPoint.ConfirmVotingOption);
+        assertThrows(InvalidCharacterException.class, () -> {server.confirmVotingOption('a');});
     }
 }

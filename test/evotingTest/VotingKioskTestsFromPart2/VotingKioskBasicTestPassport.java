@@ -6,6 +6,7 @@ import evoting.biometricdataperipheral.HumanBiometricScanner;
 import evoting.biometricdataperipheral.HumanBiometricScannerImpl;
 import evoting.biometricdataperipheral.PassportBiometricReader;
 import evoting.biometricdataperipheral.PassportBiometricReaderImpl;
+import exceptions.InvalidCharacterException;
 import exceptions.InvalidFormatException;
 import exceptions.NullNifException;
 import exceptions.NullPasswordException;
@@ -16,6 +17,7 @@ import services.*;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class VotingKioskBasicTestPassport {
     private VotingKiosk server;
@@ -61,5 +63,12 @@ public class VotingKioskBasicTestPassport {
         assertDoesNotThrow(() -> {server.consultVotingOption(party);});
         assertDoesNotThrow(() -> {server.vote();});
         assertDoesNotThrow(() -> {server.confirmVotingOption('v');});
+    }
+
+    @Test
+    void invalidCharTest() {
+        server.initVoting();
+        server.entryPointSetter(VotingKiosk.EntryPoint.GrantExplicitConsent);
+        assertThrows(InvalidCharacterException.class, () -> {server.grantExplicitConsent('a');});
     }
 }
