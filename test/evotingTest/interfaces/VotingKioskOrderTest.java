@@ -1,4 +1,4 @@
-package evotingTest.VotingKioskTestsFromPart1.VotingKioskEntryPointTest.interfaces;
+package evotingTest.interfaces;
 
 import exceptions.InvalidAccountException;
 import exceptions.InvalidDNIDocumException;
@@ -7,7 +7,7 @@ import exceptions.ProceduralException;
 
 import java.net.ConnectException;
 
-public interface VotingKioskTest {
+public interface VotingKioskOrderTest {
     void setDocument() throws ProceduralException;
 
     void enterAccount() throws InvalidAccountException, ProceduralException;

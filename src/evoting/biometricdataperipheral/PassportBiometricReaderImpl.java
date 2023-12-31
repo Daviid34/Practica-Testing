@@ -15,6 +15,7 @@ public class PassportBiometricReaderImpl implements  PassportBiometricReader{
         this.passport = pasaport;
     }
 
+    public void setDifferentPassport(BiometricData passport) {this.passport = passport;}
     public void setOrganism(HashMap<BiometricData, Nif> organism) {
         this.organism = organism;
     }

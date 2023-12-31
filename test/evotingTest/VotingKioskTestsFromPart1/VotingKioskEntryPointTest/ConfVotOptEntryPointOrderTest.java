@@ -4,7 +4,7 @@ import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
-import evotingTest.VotingKioskTestsFromPart1.VotingKioskEntryPointTest.interfaces.VotingKioskTest;
+import evotingTest.interfaces.VotingKioskOrderTest;
 import exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConfVotOptEntryPointTest implements VotingKioskTest {
+public class ConfVotOptEntryPointOrderTest implements VotingKioskOrderTest {
     VotingKiosk server;
     List<VotingOption> parties;
 
