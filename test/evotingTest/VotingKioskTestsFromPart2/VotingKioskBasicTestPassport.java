@@ -17,8 +17,7 @@ import services.*;
 
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VotingKioskBasicTestPassport implements VotingKioskBasicTest {
     private VotingKiosk server;
@@ -99,5 +98,13 @@ public class VotingKioskBasicTestPassport implements VotingKioskBasicTest {
         assertDoesNotThrow(() -> {server.consultVotingOption(party);});
         assertDoesNotThrow(() -> {server.vote();});
         assertDoesNotThrow(() -> {server.confirmVotingOption('v');});
+    }
+
+    @Test
+    public void removeBiometricDataTest() {
+        basicIterationTest();
+        assertEquals(null, server.getFaceData());
+        assertEquals(null, server.getHumanBiometricData());
+        assertEquals(null, server.getPassportBiometricData());
     }
 }

@@ -166,6 +166,18 @@ public class VotingKiosk {
         return parties;
     }
 
+    public BiometricData getPassportBiometricData() {
+        return passportBiometricData;
+    }
+
+    public BiometricData getHumanBiometricData() {
+        return humanBiometricData;
+    }
+
+    public SingleBiometricData getFaceData() {
+        return faceData;
+    }
+
     public void entryPointSetter(EntryPoint entryPoint) {
         context.entryPoint = entryPoint;
     }
