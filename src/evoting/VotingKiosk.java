@@ -177,9 +177,10 @@ public class VotingKiosk {
     /*
     ----------------------------------------------PART-2--------------------------------------------------------
     */
-    BiometricData passportBiometricData;
-    BiometricData humanBiometricData;
     SingleBiometricData faceData;
+    BiometricData passportBiometricData = new BiometricData(new SingleBiometricData(new byte[]{}), new SingleBiometricData(new byte[]{}));
+    BiometricData humanBiometricData;
+
 
     HumanBiometricScanner humanBiometricScanner;
     PassportBiometricReader passportBiometricReader;
@@ -231,7 +232,6 @@ public class VotingKiosk {
         }
         humanBiometricData = new BiometricData(faceData, fingerPrintData);
         verifyBiometricData(humanBiometricData, passportBiometricData);
-        removeBiometricData();
         electoralOrganism.canVote(voter);
         context.entryPoint = EntryPoint.InitOptionsNavigation;
         System.out.println("Successful identity and voting rights verification");

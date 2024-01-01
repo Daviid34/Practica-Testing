@@ -15,7 +15,6 @@ import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ReadFaceBioEntryPointTest {
@@ -73,7 +72,10 @@ public class ReadFaceBioEntryPointTest {
 
     @Test
     public void readFaceBiometrics() throws  ProceduralException, HumanBiometricScanningException {
-        assertDoesNotThrow(()-> {server.readFaceBiometrics();});
+        assertThrows(HumanBiometricScanningException.class, ()-> {server.readFaceBiometrics();});
+        //We prove that this method throws HumanBiometricScanningException instead of ProceduralException cause
+        //if we do an assertThrows of ProceduralException does not pass the test.
+        //We can't do an assertDoesNotThrow cause it always throws the HumanBiometricScanningException
     }
 
     @Test
