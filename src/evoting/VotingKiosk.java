@@ -1,17 +1,15 @@
 package evoting;
 
-import data.Nif;
-import data.Password;
-import data.VotingOption;
+import data.*;
 import exceptions.*;
 import mocks.PartyListServer;
 
-import exceptions.InvalidAccountException;
-import exceptions.InvalidDNIDocumException;
-import exceptions.NotEnabledException;
 import services.ElectoralOrganism;
 import services.LocalService;
 import services.Scrutiny;
+
+import evoting.biometricdataperipheral.HumanBiometricScanner;
+import evoting.biometricdataperipheral.PassportBiometricReader;
 
 import java.net.ConnectException;
 import java.util.List;
@@ -28,8 +26,6 @@ public class VotingKiosk {
 
     Nif voter;
 
-
-
     public VotingKiosk(Scrutiny scrutiny, LocalService localService, ElectoralOrganism electoralOrganism) {
         this.scrutiny = scrutiny;
         this.localService = localService;
@@ -37,6 +33,7 @@ public class VotingKiosk {
 
         partyListServer = new PartyListServer();
         parties = partyListServer.getList();
+        scrutiny.initVoteCount(parties);
     }
 
     private static class Context{
@@ -47,23 +44,35 @@ public class VotingKiosk {
     }
 
     public enum EntryPoint {
-        SetDocument, EnterAccount, ConfirmIdentif, EnterNif, InitOptionsNavigation, ConsultVotingOptions, Vote, ConfirmVotingOption
+        SetDocument, EnterAccount, ConfirmIdentif, EnterNif,
+        InitOptionsNavigation, ConsultVotingOptions, Vote, ConfirmVotingOption,
+        GrantExplicitConsent, ReadPassport,
+        ReadFaceBiometrics, ReadFingerPrintBiometrics;
     }
 
     public void initVoting() {
         System.out.println("\rInitializing... ");
-        System.out.println("Choose an identificative document:\nNIF -> n \nPassport -> p\n");
+        System.out.println("Choose an identification document:\nNIF -> n \nPassport -> p\n");
         context = new Context();
     }
 
-    public void setDocument(char c) throws ProceduralException {
+    public void setDocument(char c) throws ProceduralException, InvalidCharacterException {
         //Check if initVoting was called early
         if (context.entryPoint != EntryPoint.SetDocument) {
             throw new ProceduralException("ERROR: initVoting wasn't called earlier");
         }
-        context.entryPoint = EntryPoint.EnterAccount;
         //In case the NIF option was chosen
-        if (c == 'n') System.out.println("Support staff is required");
+        if (c == 'n') {
+            System.out.println("Login via NIF detected: Support staff is required");
+            context.entryPoint = EntryPoint.EnterAccount;
+        }
+        //In case the Passport option was chosen
+        else if (c == 'p') {
+            System.out.println("Login via Passport detected: Please grant 'v' or not 'f' your consent");
+            context.entryPoint = EntryPoint.GrantExplicitConsent;
+        } else {
+            throw new InvalidCharacterException("ERROR: the char must be 'p' (passport) or 'n' (NIF)");
+        }
 
     }
 
@@ -76,9 +85,10 @@ public class VotingKiosk {
     }
 
 
-    public void confirmIdentif(char conf) throws InvalidDNIDocumException, ProceduralException {
+    public void confirmIdentif(char conf) throws InvalidDNIDocumException, ProceduralException, InvalidCharacterException {
         //Check that enterAccount was called early
         if (context.entryPoint != EntryPoint.ConfirmIdentif) throw new ProceduralException("ERROR: enterAccount wasn't called earlier");
+        if (conf != 'v' && conf != 'f') throw new InvalidCharacterException("ERROR: The char must be 'v' (confirm) or 'f' (deny)");
         if (conf == 'f') throw new InvalidDNIDocumException("ERROR: invalid DNI documentation");
         System.out.println("Enter the NIF");
         context.entryPoint = EntryPoint.EnterNif;
@@ -97,7 +107,6 @@ public class VotingKiosk {
     public void initOptionsNavigation() throws ProceduralException {
         //Check that enterNif was called early
         if (context.entryPoint != EntryPoint.InitOptionsNavigation) throw new ProceduralException("ERROR: enterNif wasn't called earlier");
-        scrutiny.initVoteCount(parties);
         showParties(parties);
         context.entryPoint = EntryPoint.ConsultVotingOptions;
     }
@@ -121,9 +130,10 @@ public class VotingKiosk {
         context.entryPoint = EntryPoint.ConfirmVotingOption;
     }
 
-    public void confirmVotingOption(char conf) throws ProceduralException, ConnectException {
+    public void confirmVotingOption(char conf) throws ProceduralException, ConnectException, InvalidCharacterException {
         //Check that vote was called early
         if (context.entryPoint != EntryPoint.ConfirmVotingOption) throw new ProceduralException("ERROR: vote wasn't called earlier");
+        if (conf != 'v' && conf != 'f') throw new InvalidCharacterException("ERROR: The char must be 'v' (confirm) or 'f' (deny)");
         if (conf == 'f'){
             partyChosen = null;
             //In case it's not confirmed, show again the voting options are anable to go back to ConsultVotingOptions
@@ -134,15 +144,19 @@ public class VotingKiosk {
             System.out.println("\nVote confirmed!");
             scrutiny.scrutinize(partyChosen);
             electoralOrganism.disableVoter(voter);
+            System.out.println("End of voting session");
+            scrutiny.getScrutinyResults();
+            System.out.println("Returning to main screen");
         }
     }
 
     /*
     ----------------------------------------------ADDITIONAL-METHODS--------------------------------------------------------
-     */
+    */
+    //All methods are implemented in order to ease the test
     public void showParties(List<VotingOption> parties) {
         System.out.println();
-        System.out.println("Here you have the list of able parties to vote");
+        System.out.println("Here you have the list of available parties to vote");
         for (VotingOption party : parties) {
             System.out.println(party.toString());
         }
@@ -152,7 +166,101 @@ public class VotingKiosk {
         return parties;
     }
 
+    public BiometricData getPassportBiometricData() {
+        return passportBiometricData;
+    }
+
+    public BiometricData getHumanBiometricData() {
+        return humanBiometricData;
+    }
+
+    public SingleBiometricData getFaceData() {
+        return faceData;
+    }
+
     public void entryPointSetter(EntryPoint entryPoint) {
         context.entryPoint = entryPoint;
+    }
+
+    public void setHumanBiometricScanner(HumanBiometricScanner humanBiometricScanner) {this.humanBiometricScanner = humanBiometricScanner;}
+
+    public void setPassportBiometricReader(PassportBiometricReader passportBiometricReader) {this.passportBiometricReader = passportBiometricReader;}
+
+    /*
+    ----------------------------------------------PART-2--------------------------------------------------------
+    */
+    SingleBiometricData faceData;
+    BiometricData passportBiometricData = new BiometricData(new SingleBiometricData(new byte[]{}), new SingleBiometricData(new byte[]{}));
+    BiometricData humanBiometricData;
+
+
+    HumanBiometricScanner humanBiometricScanner;
+    PassportBiometricReader passportBiometricReader;
+
+    public void grantExplicitConsent(char cons) throws ProceduralException, InvalidCharacterException {
+        //Check that setDocument was called early
+        if (context.entryPoint != EntryPoint.GrantExplicitConsent) throw new ProceduralException("ERROR: removeBiometricData wasn't called earlier");
+        if (cons != 'v' && cons != 'f') throw new InvalidCharacterException("ERROR: The char must be 'v' (confirm) or 'f' (deny)");
+        if (cons == 'v') {
+            context.entryPoint = EntryPoint.ReadPassport;
+            System.out.println("Proceeding to read passport");
+        } else {
+            context.entryPoint = EntryPoint.SetDocument;
+            System.out.println("Consent denied...\nReturning to the 'Select Document' page...");
+        }
+    }
+
+    public void readPassport ()
+            throws NotValidPassportException, PassportBiometricReadingException, ProceduralException {
+        //Check that grantExplicitConsent was called early
+        if (context.entryPoint != EntryPoint.ReadPassport) throw new ProceduralException("ERROR: grantExplicitConsent wasn't called earlier");
+        passportBiometricReader.validatePassport();
+        passportBiometricData = passportBiometricReader.getPassportBiometricData();
+        if (passportBiometricData == null) throw  new PassportBiometricReadingException("ERROR: Critical failure reading the passport");
+        System.out.println("Validity and reading of parameters OK");
+        voter = passportBiometricReader.getNifWithOCR();
+        context.entryPoint = EntryPoint.ReadFaceBiometrics;
+    }
+
+    public void readFaceBiometrics () throws HumanBiometricScanningException, ProceduralException {
+        //Check that readPassport was called early
+        if (context.entryPoint != EntryPoint.ReadFaceBiometrics) throw new ProceduralException("ERROR: readPassport wasn't called earlier");
+        faceData = humanBiometricScanner.scanFaceBiometrics();
+        if(passportBiometricData.getFacialBiometric() != faceData){
+            throw new HumanBiometricScanningException("ERROR: Error in the scan process");
+        }
+        System.out.println("Proceeding to read fingerprint biometrics");
+        context.entryPoint = EntryPoint.ReadFingerPrintBiometrics;
+    }
+
+    public void readFingerPrintBiometrics()
+            throws NotEnabledException, HumanBiometricScanningException,
+            BiometricVerificationFailedException, ConnectException, ProceduralException {
+        //Check that readFaceBiometrics was called early
+        if (context.entryPoint != EntryPoint.ReadFingerPrintBiometrics) throw new ProceduralException("ERROR: readFaceBiometrics wasn't called earlier");
+        SingleBiometricData fingerPrintData = humanBiometricScanner.scanFingerprintBiometrics();
+        if(passportBiometricData.getFingerprintBiometric() != fingerPrintData) {
+            throw new HumanBiometricScanningException("ERROR: Fingerprint biometric does not match");
+        }
+        humanBiometricData = new BiometricData(faceData, fingerPrintData);
+        verifyBiometricData(humanBiometricData, passportBiometricData);
+        electoralOrganism.canVote(voter);
+        context.entryPoint = EntryPoint.InitOptionsNavigation;
+        System.out.println("Successful identity and voting rights verification");
+    }
+
+
+    private void verifyBiometricData(BiometricData humanBioD, BiometricData passpBioD) throws BiometricVerificationFailedException {
+        if (!humanBioD.equals(passpBioD)) {
+            removeBiometricData();
+            throw new BiometricVerificationFailedException("ERROR: biometric data does not match");
+        }
+        removeBiometricData();
+    }
+
+    private void removeBiometricData() {
+        faceData = null;
+        humanBiometricData = null;
+        passportBiometricData = null;
     }
 }

@@ -1,9 +1,10 @@
-package evotingTest.VotingKioskEnterPointTest;
+package evotingTest.VotingKioskTestsFromPart1.VotingKioskEntryPointTest;
 
 import data.Nif;
 import data.Password;
 import data.VotingOption;
 import evoting.VotingKiosk;
+import evotingTest.interfaces.VotingKioskOrderTest;
 import exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConfirmIdEntryPointTest implements VotingKioskTest {
+public class SetDocEntryPointOrderTest implements VotingKioskOrderTest {
     private VotingKiosk server;
     List<VotingOption> parties;
 
@@ -34,13 +35,13 @@ public class ConfirmIdEntryPointTest implements VotingKioskTest {
         server = new VotingKiosk(scrutiny, localService, electoralOrganism);
         server.initVoting();
         parties = server.getParties();
-        server.entryPointSetter(VotingKiosk.EntryPoint.ConfirmIdentif);
+        server.entryPointSetter(VotingKiosk.EntryPoint.SetDocument);
     }
 
     @Override
     @Test
     public void setDocument() throws ProceduralException {
-        assertThrows(ProceduralException.class, ()-> {server.setDocument('n');});
+        assertDoesNotThrow(()-> {server.setDocument('n');});
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ConfirmIdEntryPointTest implements VotingKioskTest {
     @Override
     @Test
     public void confirmIdentif() throws InvalidDNIDocumException, ProceduralException {
-        assertDoesNotThrow(()-> {server.confirmIdentif('v');});
+        assertThrows(ProceduralException.class, ()-> {server.confirmIdentif('v');});
     }
 
     @Override
